@@ -17,7 +17,8 @@ from django_cbtools import sync_gateway
 from django.db import models
 from django.utils import timezone
 from django.db.models.fields.files import FileField
-from couchbase.bucket import Bucket, NotFoundError, ValueResult
+from couchbase.bucket import Bucket
+from couchbase.exceptions import PathNotFoundException, InvalidValueException
 from django_extensions.db.fields import ShortUUIDField
 from django.db.models.fields import DateTimeField, DecimalField
 #from django_cbtools.models import CouchbaseModel, CouchbaseModelError
@@ -67,7 +68,7 @@ class CBModel(models.Model):
 
         if len(args) == 1:
             v = args[0]
-            if isinstance(v, ValueResult):
+            if isinstance(v, InvalidValueException):
                 self.load_list(v)
             if isinstance(v, string_types):
                 self.load(v)
@@ -156,7 +157,7 @@ class CBModel(models.Model):
             doc = self.db.get(id)
             self.from_row(doc)
         except:
-            raise NotFoundError
+            raise PathNotFoundException
 
     def load_list(self, doc):
         self.from_row(doc)
@@ -171,7 +172,7 @@ class CBModel(models.Model):
                     # TODO delete after load related and check on delete
                     # field.embedded_model.db.remove(getattr(self,field.name))
             self.db.remove(self.id)
-        except NotFoundError:
+        except PathNotFoundException:
             return HttpResponseNotFound
 
     def load_related(self,related_attr, related_klass):

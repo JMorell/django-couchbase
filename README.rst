@@ -1,10 +1,10 @@
 ================
-django-couchbase (> Django 4.0)
+django-couchbase (for Django > 4.0)
 ================
 
 This package is aimed at developing the ORM for the couchbase - the next generation NoSQL database.
 
-Updated to run on newer versions of Django (above 4.0)
+Updated to run on newer versions of Django
 
 
 Dependencies

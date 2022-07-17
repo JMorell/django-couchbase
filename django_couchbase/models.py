@@ -17,8 +17,11 @@ from django_cbtools import sync_gateway
 from django.db import models
 from django.utils import timezone
 from django.db.models.fields.files import FileField
+from couchbase.cluster import Cluster
+from couchbase.options import ClusterOptions
+from couchbase.auth import PasswordAuthenticator
 from couchbase.bucket import Bucket
-from couchbase.exceptions import PathNotFoundException, InvalidValueException
+from couchbase.exceptions import DocumentNotFoundException, InvalidValueException
 from django_extensions.db.fields import ShortUUIDField
 from django.db.models.fields import DateTimeField, DecimalField
 #from django_cbtools.models import CouchbaseModel, CouchbaseModelError
@@ -80,7 +83,9 @@ class CBModel(models.Model):
         return self.id
 
     def get_bucket(self):
-        return Bucket(''.join(['couchbase://', settings.CB_BUCKETS.get(self.bucket)]))
+        cluster = Cluster.connect('couchbase://{0}'.format(settings.CB_BUCKETS.get(self.bucket)['host']), 
+                    ClusterOptions(PasswordAuthenticator(settings.CB_BUCKETS.get(self.bucket)['user'], settings.CB_BUCKETS.get(self.bucket)['password'])))
+        return Cluster.bucket(cluster, bucket_name=settings.CB_BUCKETS.get(self.bucket)['bucket'])
 
     def save(self, *args, **kwargs):
         self.updated = timezone.now()
@@ -157,7 +162,7 @@ class CBModel(models.Model):
             doc = self.db.get(id)
             self.from_row(doc)
         except:
-            raise PathNotFoundException
+            raise DocumentNotFoundException
 
     def load_list(self, doc):
         self.from_row(doc)
@@ -172,7 +177,7 @@ class CBModel(models.Model):
                     # TODO delete after load related and check on delete
                     # field.embedded_model.db.remove(getattr(self,field.name))
             self.db.remove(self.id)
-        except PathNotFoundException:
+        except DocumentNotFoundException:
             return HttpResponseNotFound
 
     def load_related(self,related_attr, related_klass):

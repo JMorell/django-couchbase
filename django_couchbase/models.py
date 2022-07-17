@@ -85,7 +85,8 @@ class CBModel(models.Model):
     def get_bucket(self):
         cluster = Cluster.connect('couchbase://{0}'.format(settings.CB_BUCKETS.get(self.bucket)['host']), 
                     ClusterOptions(PasswordAuthenticator(settings.CB_BUCKETS.get(self.bucket)['user'], settings.CB_BUCKETS.get(self.bucket)['password'])))
-        return Cluster.bucket(cluster, bucket_name=settings.CB_BUCKETS.get(self.bucket)['bucket'])
+        bucket = Cluster.bucket(cluster, bucket_name=settings.CB_BUCKETS.get(self.bucket)['bucket'])
+        return bucket.default_collection()
 
     def save(self, *args, **kwargs):
         self.updated = timezone.now()

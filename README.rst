@@ -1,8 +1,10 @@
 ================
-django-couchbase
+django-couchbase (> Django 4.0)
 ================
 
 This package is aimed at developing the ORM for the couchbase - the next generation NoSQL database.
+
+Updated to run on newer versions of Django (above 4.0)
 
 
 Dependencies
@@ -10,11 +12,11 @@ Dependencies
 
 Make sure you install the below dependencies::
 
-    couchbase==2.0.9
+    couchbase==4.0.2
     shortuuid==0.4.3
-    six==1.10.0
-    django-extensions==1.6.7
-    django-tastypie==0.13.3
+    six==1.16.0
+    django-extensions==3.2.0
+    django-tastypie==0.14.4
 
 Quick Install
 -------------
@@ -27,7 +29,7 @@ The following configuration settings are used for the package (you can use the s
 
 
     CB_BUCKETS = {
-        "MAIN_BUCKET" : '127.0.0.1/default'
+        "MAIN_BUCKET" : { 'host': 'localhost', 'user': 'USER_NAME', 'password': 'PASSWORD', 'bucket': 'BUCKET_NAME' }
     }
 
 Add ``django_couchbase`` to ``INSTALLED_APPS``::

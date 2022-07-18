@@ -29,8 +29,16 @@ The following configuration settings are used for the package (you can use the s
 
 
     CB_BUCKETS = {
-        "MAIN_BUCKET" : { 'host': 'localhost', 'user': 'USER_NAME', 'password': 'PASSWORD', 'bucket': 'BUCKET_NAME' }
+        "MAIN_BUCKET" : {
+            'HOST': 'localhost',
+            'USER': 'USER_NAME',
+            'PASSWORD': 'PASSWORD',
+            'BUCKET': 'BUCKET_NAME',
+            'SCOPE': '_default',
+            'COLLECTION': '_default'
+        }
     }
+}
 
 Add ``django_couchbase`` to ``INSTALLED_APPS``::
 
